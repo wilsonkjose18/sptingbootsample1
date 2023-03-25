@@ -3,6 +3,8 @@ package com.example.demo.model;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
+
 
 @Data
 @Slf4j
@@ -47,24 +49,26 @@ public class FullName {
         log.info("first name index is " + first_name_index);
         log.info("last name Index is " + last_name_index);
         if ((words.length > 2) && (last_name_index > (first_name_index + 1))) {
-            StringBuilder s = new StringBuilder();
-            for (int i = first_name_index + 1; i < last_name_index; i++) {
-                s.append(" ");
-                s.append(words[i]);
-            }
-            middleName = s.toString();
+            middleName = Arrays.stream(Arrays.copyOfRange(words, first_name_index + 1, last_name_index - 1))
+                    .reduce((str1, str2) -> str1 + " " + str2)
+                    .orElse("");
             log.info("middle name " + middleName);
         }
     }
 
     public String getReversedName() {
-        return this.getLastName()
+        String s = this.getLastName()
                 + " "
                 + this.getSuffix()
                 + ","
+                + this.getPrefix()
+                + " "
                 + this.getFirstName()
                 + " "
                 + this.getMiddleName();
+        s = s.replaceAll("\\s+", " ").trim();
+        s = s.replaceAll("\\s+,", ",").trim();
+        return s;
     }
 }
 
